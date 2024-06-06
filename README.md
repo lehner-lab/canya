@@ -19,6 +19,7 @@ python -m pip install --no-cache-dir https://github.com/mj-thompson/canya/tarbal
 ### Running CANYA
 
 Once installed, CANYA can be run very simply with the following options:
+
 ```--input``` Input sequences, either a FASTA or a text file with two *tab-delimited* columns with *no* header or column-names. Columns contain a sequence idenity (arbirtrary) as well as the amino acid sequence. See example data folder for examples.
 
 ```--output``` Name/directory of the output txt file. CANYA will output a single, tab-delimited file named after this prefix with two columns: (1) with the sequence identity (FASTA header or corresponding column of the input text file) (2) The CANYA nucleation score.
