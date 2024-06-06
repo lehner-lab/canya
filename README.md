@@ -7,8 +7,8 @@ To start, you'll need a python installation with tensorflow, numpy, and pandas i
 
 e.g. by conda:
 ```
-conda create canya_env
-conda activate canya_env
+conda create canyaenv python=3.9
+conda activate canyaenv
 ```
 
 CANYA can then be installed via pip:
