@@ -22,7 +22,7 @@ import numpy as np
 from pkg_resources import resource_filename
 
 
-seqminsize=149
+seqminsize=24
 paddings=tf.constant([[2,2],[0,0]])
 
 def dynamic_padding(inp, min_size,
