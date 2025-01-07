@@ -300,10 +300,10 @@ def create_model(
     
     return model
 
-def get_canya():
+def get_canya(modweights="models/model_weights.h5"):
     canyamodel=create_model()
-    canyamodel.load_weights(resource_filename(__name__,"models/model_weights.h5"))
-    print("Loaded model")
+    canyamodel.load_weights(resource_filename(__name__,modweights))
+    print("Loaded model " + modweights)
     return canyamodel
 
 def get_predictions(model,sequences):
