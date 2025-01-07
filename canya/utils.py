@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from itertools import groupby
-windowsize=145
+windowsize=20
 
 
 # check if the first line contains ">"
@@ -43,6 +43,7 @@ def fasta_iter(fasta_name):
 def get_input_sequences(filename):
     readAsFasta=isFasta(filename)
     seqs=[]
+    seqposes=[]
     seqnames=[]
     if(readAsFasta):
         fiter=fasta_iter(filename)
@@ -51,12 +52,15 @@ def get_input_sequences(filename):
             if "X" in seq or "Z" in seq:
                 continue
             seqadd=seq.split('*')[0]
-            if len(seqadd) > 145:
-                curseqs=[seqadd[i:i+windowsize] for i in range(0, len(seqadd), windowsize)]
+            if len(seqadd) > windowsize:
+                curseqs=[seqadd[i:(i+windowsize)] for i in range(len(seqadd)-windowsize+1)]
+                curseqposes=[str(i+1)+":"+str(i+1+windowsize) for i in range(len(seqadd)-windowsize+1)]
             else:
                 curseqs=[seqadd]
+                curseqposes=[str(1)+":"+str(len(seqadd))]
             seqs.extend(curseqs)
             seqnames.extend([curname]*len(curseqs))
+            seqposes.extend(curseqposes)
     else:
         seqdf=pd.read_csv(filename,sep="\t",header=None)
         seqnames_prop=seqdf.iloc[:,0].tolist()
@@ -65,13 +69,16 @@ def get_input_sequences(filename):
             if "X" in seq or "Z" in seq:
                 continue
             seqadd=seq.split('*')[0]
-            if len(seqadd) > 145:
-                curseqs=[seqadd[i:i+windowsize] for i in range(0, len(seqadd), windowsize)]
+            if len(seqadd) > windowsize:
+                curseqs=[seqadd[i:(i+windowsize)] for i in range(len(seqadd)-windowsize+1)]
+                curseqposes=[str(i+1)+":"+str(i+1+windowsize) for i in range(len(seqadd)-windowsize+1)]
             else:
                 curseqs=[seqadd]
+                curseqposes=[str(1)+":"+str(len(seqadd))]
             seqs.extend(curseqs)
             seqnames.extend([curname]*len(curseqs))
-    return [seqnames, seqs]
+            seqposes.extend(curseqposes)
+    return [seqnames, seqs,seqposes]
         
 # https://stackoverflow.com/questions/312443/how-do-i-split-a-list-into-equally-sized-chunks
 def chunks(lst, n):

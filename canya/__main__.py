@@ -17,25 +17,30 @@ def parse_inputs():
     parser.add_argument(
         '--output', default='example_out', help='Name/directory of the output txt file. If run in\
         the default mode, CANYA will output a single, tab-delimited file named after this prefix\
-        with two columns: (1) with the sequence identity (FASTA header or corresponding column of\
-        the input text file) (2) The CANYA nucleation score.\
-        If run in motif mode, a folder will be created that contains a file per sequence, where rows\
-        are named with the specific cluster, columns after the sequence position, and each entry contains\
-        the activation energy of the cluster at that position. Activation energies can be summarized with\
-        the --act argument.'
+        with two columns: \
+        (1) with the sequence identity (FASTA header or corresponding column of the input text file)\
+        (2) The CANYA nucleation score.\
+        If run with the `--summarize no` option, CANYA will output a longer file that includes the output\
+        of CANYA across the sequence (if the sequence is longer than 20 amino acids: \
+        (1) The sequence identity\
+        (2) The positions within the sequence\
+        (3) The subsequence at the specified positions\
+        (4) The corresponding CANYA score at that positions.',
     )
     parser.add_argument(
         '--mode', default='default', help='Mode to run CANYA. Default mode outputs a single\
         tab-delimited text file containing sequence identities and a CANYA score. \'motif\' \
         mode will dump a file per sequence containing the activation energies per clusterXposition.\
         Activation energies within a cluster can be summarized according to the --act argument.',
-        choices=["default", "motif"]
+        choices=["default", "ensemble"]
     )
     parser.add_argument(
-        '--act', default='max', help='Function by which to summarize filter activations for a given\
-        cluster. Default is \'max\', other options are \'mean\' and \'min\'. Explicitly, this function\
-        collapses the activation energies across all filters comprising a cluster for a given position.',
-        choices=["max","mean","min"]
+        '--summarize', default='median', help='Function by which to summarize filter activations for a given\
+        cluster. Default is \'median\', other options are \'mean\', \'max\', and \'min\'. Explicitly, this function\
+        summarizes CANYA scores taken across the sequence (those with length > 20) and reports one single score\
+        as calculated by this summarizing function across the sequence. \'no\' will not summarize the score and\
+        will instead report the CANYA score calculated at each subsequence in the sequence.',
+        choices=["max","mean","min", "median", "no"]
     )
 
     # Parse all command line arguments
@@ -44,8 +49,8 @@ def parse_inputs():
 
 def main():
     args=parse_inputs()
-    if None in [args.input, args.output, args.mode, args.act]:
-        logging.error('Usage: canya [-input [input]] [-output [output]] --mode default --act max')
+    if None in [args.input, args.output, args.mode, args.summarize]:
+        logging.error('Usage: canya [-input [input]] [-output [output]] --mode default --summarize median')
         exit()
     canyamod=modeling.get_canya()
     seqlist=utils.get_input_sequences(args.input)
@@ -59,14 +64,15 @@ def main():
         seqstopred=seqstopred.tolist()
         namespred=np.array(seqlist[0])[curidx]
         namespred=namespred.tolist()
-    
-        preds=modeling.get_predictions(model=canyamod,sequences=seqstopred)
+        posesseq=np.array(seqlist[2])[curidx]
+        posesseq=posesseq.tolist()
+
+        preds=get_predictions(model=canyamod,sequences=seqstopred)
         curpreddf=pd.DataFrame({"seqid" : namespred,
+                            "seq" : seqstopred,
+                            "pos" : posesseq,
                             "pred" : preds})
-        mindf=curpreddf.groupby("seqid").min()
-        mindf=pd.DataFrame({"seqid" : mindf.index.tolist(),
-                           "pred" : mindf["pred"].tolist()},index=None)
-        resdfs.append(mindf)
+        resdfs.append(curpreddf)
         sumseqsdone+=curpreddf.shape[0]
         propdone=sumseqsdone / numseqs * 100
         printstr="Finished "+ str(round(propdone)) + "% ("
@@ -74,8 +80,23 @@ def main():
         print(printstr + "of sequences")
         
     resdf=pd.concat(resdfs,axis=0)
-    resdf=resdf.groupby("seqid").min()
-    resdf=pd.DataFrame({"seqid" : resdf.index.tolist(),
+    if args.summarize=="max":
+        resdf=resdf.groupby("seqid").max()
+        resdf=pd.DataFrame({"seqid" : resdf.index.tolist(),
+                           "CANYA" : resdf["pred"].tolist()},index=None)
+    elif args.summarize=="min":
+        resdf=resdf.groupby("seqid").min()
+        resdf=pd.DataFrame({"seqid" : resdf.index.tolist(),
+                           "CANYA" : resdf["pred"].tolist()},index=None)
+    elif args.summarize=="mean":
+        resdf=resdf.groupby("seqid").mean()
+        resdf=pd.DataFrame({"seqid" : resdf.index.tolist(),
+                           "CANYA" : resdf["pred"].tolist()},index=None)
+    elif args.summarize=="no":
+        print("using full output")
+    else:
+        resdf=resdf.groupby("seqid").median()
+        resdf=pd.DataFrame({"seqid" : resdf.index.tolist(),
                            "CANYA" : resdf["pred"].tolist()},index=None)
     resdf.to_csv(args.output,sep="\t",index=False)
     
