@@ -29,9 +29,9 @@ def parse_inputs():
     )
     parser.add_argument(
         '--mode', default='default', help='Mode to run CANYA. Default mode outputs a single\
-        tab-delimited text file containing sequence identities and a CANYA score. \'motif\' \
-        mode will dump a file per sequence containing the activation energies per clusterXposition.\
-        Activation energies within a cluster can be summarized according to the --act argument.',
+        tab-delimited text file containing sequence identities and a CANYA score. \'ensemble\' \
+        mode will do the same but report the averaged scores across 10 models, as well as an\
+        additional column that contains the standard deviation of scores across models.',
         choices=["default", "ensemble"]
     )
     parser.add_argument(
