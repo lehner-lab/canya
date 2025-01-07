@@ -16,7 +16,7 @@ def parse_inputs():
     )
     parser.add_argument(
         '--output', default='example_out', help='Name/directory of the output txt file. If run in\
-        the default mode, CANYA will output a single, tab-delimited file named after this prefix\
+        the default mode, CANYA will output a tab-delimited file named after this prefix\
         with two columns: \
         (1) with the sequence identity (FASTA header or corresponding column of the input text file)\
         (2) The CANYA nucleation score.\
@@ -25,21 +25,22 @@ def parse_inputs():
         (1) The sequence identity\
         (2) The positions within the sequence\
         (3) The subsequence at the specified positions\
-        (4) The corresponding CANYA score at that positions.',
+        (4) The corresponding CANYA score at the corresponding positions.',
     )
     parser.add_argument(
-        '--mode', default='default', help='Mode to run CANYA. Default mode outputs a single\
-        tab-delimited text file containing sequence identities and a CANYA score. \'ensemble\' \
-        mode will do the same but report the averaged scores across 10 models, as well as an\
-        additional column that contains the standard deviation of scores across models.',
+        '--mode', default='default', help='Mode to run CANYA. Default mode outputs a tab-delimited\
+        text file containing sequence identities and a CANYA score.\
+         \'ensemble\' mode will do the same but report the averaged scores across 10 models, \
+        as well as an additional column that contains the standard deviation of scores across models.',
         choices=["default", "ensemble"]
     )
     parser.add_argument(
-        '--summarize', default='median', help='Function by which to summarize filter activations for a given\
-        cluster. Default is \'median\', other options are \'mean\', \'max\', and \'min\'. Explicitly, this function\
-        summarizes CANYA scores taken across the sequence (those with length > 20) and reports one single score\
-        as calculated by this summarizing function across the sequence. \'no\' will not summarize the score and\
-        will instead report the CANYA score calculated at each subsequence in the sequence.',
+        '--summarize', default='median', help='Function by which to summarize CANYA scores across a sequence that\
+        is longer than CANYA\'s input window of 20 amino acids. Default is \'median\', other options are\
+         \'mean\', \'max\', and \'min\'. Explicitly, this function summarizes CANYA scores taken across\
+        the sequence (those with length > 20) and reports one single score as calculated by this summarizing\
+        function across the sequence. \'no\' will not summarize the score and will instead report the\
+        CANYA score calculated at each subsequence in the sequence.',
         choices=["max","mean","min", "median", "no"]
     )
 
