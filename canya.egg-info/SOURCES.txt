@@ -11,7 +11,7 @@ canya.egg-info/dependency_links.txt
 canya.egg-info/entry_points.txt
 canya.egg-info/requires.txt
 canya.egg-info/top_level.txt
-canya/models/model_weights.h5
+canya/models/model_weights1.h5
 canya/models/model_weights10.h5
 canya/models/model_weights2.h5
 canya/models/model_weights3.h5

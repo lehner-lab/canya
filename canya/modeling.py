@@ -300,16 +300,19 @@ def create_model(
     
     return model
 
-def get_canya(modweights="models/model_weights.h5"):
+def get_canya(modweights="models/model_weights1.h5"):
     canyamodel=create_model()
     canyamodel.load_weights(resource_filename(__name__,modweights))
     print("Loaded model " + modweights)
     return canyamodel
 
-def get_predictions(model,sequences):
+def get_embedded_seqs(sequences):
     embeddedseqs=[tf.pad(seq_to_vector(x),paddings,"CONSTANT") for x in sequences]
     embeddedseqs=[dynamic_padding(x,seqminsize,post=True) for x in embeddedseqs]
     embeddedseqs=np.asarray(embeddedseqs)
+    return embeddedseqs
+
+def get_predictions(model,embeddedseqs):
     curpredictions=model.predict(embeddedseqs)
     return curpredictions.flatten().tolist()
     

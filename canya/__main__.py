@@ -53,7 +53,11 @@ def main():
     if None in [args.input, args.output, args.mode, args.summarize]:
         logging.error('Usage: canya [-input [input]] [-output [output]] --mode default --summarize median')
         exit()
-    canyamod=modeling.get_canya()
+    modellist=[]
+    if args.mode=="ensemble":
+        modellist=[modeling.get_canya("models/model_weights"+str(x)+".h5") for x in range(1,11)]
+    else:
+        modellist=[modeling.get_canya("models/model_weights1.h5")]
     seqlist=utils.get_input_sequences(args.input)
     print("Read input")
     resdfs=[]
@@ -68,11 +72,19 @@ def main():
         posesseq=np.array(seqlist[2])[curidx]
         posesseq=posesseq.tolist()
 
-        preds=modeling.get_predictions(model=canyamod,sequences=seqstopred)
-        curpreddf=pd.DataFrame({"seqid" : namespred,
-                            "seq" : seqstopred,
-                            "pos" : posesseq,
-                            "pred" : preds})
+        embeddedseqs=modeling.get_embedded_seqs(seqstopred)
+        preds=[modeling.get_predictions(model=x,embeddedseqs=embeddedseqs) for x in modellist]
+        if len(preds)==1:
+            curpreddf=pd.DataFrame({"seqid" : namespred,
+                                "seq" : seqstopred,
+                                "pos" : posesseq,
+                                "pred" : np.array(preds).flatten()})
+        else:
+            curpreddf=pd.DataFrame({"seqid" : namespred,
+                                "seq" : seqstopred,
+                                "pos" : posesseq,
+                                "pred" : np.mean(np.array(preds),axis=0).flatten(),
+                                "sd" : np.std(np.array(preds),axis=0).flatten()})
         resdfs.append(curpreddf)
         sumseqsdone+=curpreddf.shape[0]
         propdone=sumseqsdone / numseqs * 100
@@ -81,24 +93,27 @@ def main():
         print(printstr + "of sequences")
         
     resdf=pd.concat(resdfs,axis=0)
-    if args.summarize=="max":
-        resdf=resdf.groupby("seqid").max()
-        resdf=pd.DataFrame({"seqid" : resdf.index.tolist(),
-                           "CANYA" : resdf["pred"].tolist()},index=None)
-    elif args.summarize=="min":
-        resdf=resdf.groupby("seqid").min()
-        resdf=pd.DataFrame({"seqid" : resdf.index.tolist(),
-                           "CANYA" : resdf["pred"].tolist()},index=None)
-    elif args.summarize=="mean":
-        resdf=resdf.groupby("seqid").mean()
-        resdf=pd.DataFrame({"seqid" : resdf.index.tolist(),
-                           "CANYA" : resdf["pred"].tolist()},index=None)
-    elif args.summarize=="no":
-        print("using full output")
+    if args.mode=="ensemble":
+        print("Mode is ensemble, CANYA will not summarize")
     else:
-        resdf=resdf.groupby("seqid").median()
-        resdf=pd.DataFrame({"seqid" : resdf.index.tolist(),
-                           "CANYA" : resdf["pred"].tolist()},index=None)
+        if args.summarize=="max":
+            resdf=resdf.groupby("seqid").max()
+            resdf=pd.DataFrame({"seqid" : resdf.index.tolist(),
+                               "CANYA" : resdf["pred"].tolist()},index=None)
+        elif args.summarize=="min":
+            resdf=resdf.groupby("seqid").min()
+            resdf=pd.DataFrame({"seqid" : resdf.index.tolist(),
+                               "CANYA" : resdf["pred"].tolist()},index=None)
+        elif args.summarize=="mean":
+            resdf=resdf.groupby("seqid").mean()
+            resdf=pd.DataFrame({"seqid" : resdf.index.tolist(),
+                               "CANYA" : resdf["pred"].tolist()},index=None)
+        elif args.summarize=="no":
+            print("summarize set to \'no\', writing long format output")
+        else:
+            resdf=resdf.groupby("seqid").median()
+            resdf=pd.DataFrame({"seqid" : resdf.index.tolist(),
+                               "CANYA" : resdf["pred"].tolist()},index=None)
     resdf.to_csv(args.output,sep="\t",index=False)
     
 if __name__ == '__main__':
