@@ -221,7 +221,7 @@ def relative_shift(x):
 
 def create_model(
     indim=20,
-    input_length=149,    
+    input_length=24,    
     dense_number=64,
     num_filters=100,
     filter_width=3,
