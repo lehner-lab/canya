@@ -1,3 +1,0 @@
-[console_scripts]
-canya = canya.__main__:main
-
