@@ -26,7 +26,7 @@ Once installed, CANYA can be run very simply with the following options:
 
 To run CANYA on the example file, run the following lines:
 ```
-wget https://raw.githubusercontent.com/mj-thompson/canya/main/example_data/example.txt
+wget https://raw.githubusercontent.com/lehner-lab/canya/main/example_data/example.txt
 canya --input example.txt --output example_out.txt
 ```
 
