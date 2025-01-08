@@ -13,7 +13,7 @@ conda activate canyaenv
 
 CANYA can then be installed via pip:
 ```
-python -m pip install --no-cache-dir https://github.com/mj-thompson/canya/tarball/master
+python -m pip install --no-cache-dir https://github.com/lehner-lab/canya/tarball/master
 ```
 
 ### Running CANYA
