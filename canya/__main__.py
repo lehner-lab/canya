@@ -68,7 +68,7 @@ def main():
         posesseq=np.array(seqlist[2])[curidx]
         posesseq=posesseq.tolist()
 
-        preds=get_predictions(model=canyamod,sequences=seqstopred)
+        preds=modeling.get_predictions(model=canyamod,sequences=seqstopred)
         curpreddf=pd.DataFrame({"seqid" : namespred,
                             "seq" : seqstopred,
                             "pos" : posesseq,

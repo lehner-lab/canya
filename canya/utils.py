@@ -54,7 +54,7 @@ def get_input_sequences(filename):
             seqadd=seq.split('*')[0]
             if len(seqadd) > windowsize:
                 curseqs=[seqadd[i:(i+windowsize)] for i in range(len(seqadd)-windowsize+1)]
-                curseqposes=[str(i+1)+":"+str(i+1+windowsize) for i in range(len(seqadd)-windowsize+1)]
+                curseqposes=[str(i+1)+":"+str(i+windowsize) for i in range(len(seqadd)-windowsize+1)]
             else:
                 curseqs=[seqadd]
                 curseqposes=[str(1)+":"+str(len(seqadd))]
@@ -71,7 +71,7 @@ def get_input_sequences(filename):
             seqadd=seq.split('*')[0]
             if len(seqadd) > windowsize:
                 curseqs=[seqadd[i:(i+windowsize)] for i in range(len(seqadd)-windowsize+1)]
-                curseqposes=[str(i+1)+":"+str(i+1+windowsize) for i in range(len(seqadd)-windowsize+1)]
+                curseqposes=[str(i+1)+":"+str(i+windowsize) for i in range(len(seqadd)-windowsize+1)]
             else:
                 curseqs=[seqadd]
                 curseqposes=[str(1)+":"+str(len(seqadd))]

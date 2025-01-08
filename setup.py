@@ -18,7 +18,7 @@ setup(
     ],
     # Do not install tensorflow here, because might want to use tensorflow or
     # tensorflow-cpu.
-    package_data={"canya" : ["models/model_weights.h5"]},
+    package_data={"canya" : ["models/*"]},
     install_requires=[
         "numpy==1.19.5",
         "pandas<=1.3.3",
