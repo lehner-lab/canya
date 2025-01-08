@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="canya",
-    version="0.0.2",
+    version="0.0.3",
     description="CANYA a hybrid neural-network to predict nucleation propensities",
     author='Mike Thompson',
     author_email='mjthompson at ucla dot edu',
