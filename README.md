@@ -30,4 +30,12 @@ wget https://raw.githubusercontent.com/lehner-lab/canya/main/example_data/exampl
 canya --input example.txt --output example_out.txt
 ```
 
+In addition, CANYA offers two other options:
+
+```--summarize``` Either "no", which will report the CANYA score at every length-20 window along the sequence (rather than summarizing one score per sequence), or one of \{min, max, mean, median\}, which will summarize all scores along the sequence by using the specified function.
+
+```--mode``` CANYA scores can be calculated using the model whose interpretations are presented in the paper (option "default"), or by taking the average of the top-10 most interpretable trained instances of CANYA ("ensemble"), which will also report the standard deviation of scores across the 10 models (i.e. epistemic uncertainty). 
+
+
+
 CANYA has been tested on HPC and laptops---on a 2020 MacBook pro, using a single-core CPU, CANYA can generate predictions for roughly 100,000 sequences in less than a minute.
