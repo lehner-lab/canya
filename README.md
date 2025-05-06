@@ -39,3 +39,9 @@ In addition, CANYA offers two other options:
 
 
 CANYA has been tested on HPC and laptops---on a 2020 MacBook pro, using a single-core CPU, CANYA can generate predictions for roughly 100,000 sequences in less than a minute.
+
+
+For help and other inqueries, please open a Github issue, or send an email to
+```
+mikejthomps(at)gmail(dot)com
+```
