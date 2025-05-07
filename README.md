@@ -7,7 +7,7 @@ To start, you'll need a python installation with tensorflow, numpy, and pandas i
 
 e.g. by conda:
 ```
-conda create canyaenv python=3.9
+conda create -n canyaenv python=3.9
 conda activate canyaenv
 ```
 
